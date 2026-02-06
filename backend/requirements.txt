@@ -1,0 +1,27 @@
+# ============================================================
+# PHASE III - AI CHATBOT REQUIREMENTS (Cohere)
+# ============================================================
+# Install with: pip install -r requirements.txt
+
+# Core FastAPI
+fastapi>=0.109.0
+uvicorn[standard]>=0.27.0
+python-multipart>=0.0.6
+
+# Database & ORM (async support)
+sqlmodel>=0.0.14
+sqlalchemy[asyncio]>=2.0.25
+asyncpg>=0.29.0
+greenlet>=3.0.0
+psycopg2-binary>=2.9.9
+
+# Configuration
+pydantic-settings>=2.1.0
+python-dotenv>=1.0.0
+
+# AI Integration - Cohere
+cohere>=5.0.0
+
+# HTTP Client & SSE
+httpx>=0.26.0
+sse-starlette>=1.8.0
