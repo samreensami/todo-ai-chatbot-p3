@@ -5,10 +5,10 @@ import { useSearchParams } from "next/navigation";
 import type { TaskRead } from "../../../lib/generated/task_types";
 import { taskAPI } from "../../../lib/api-service";
 
-// Main page component with Suspense boundary
+// Main page component with Suspense boundary to fix Vercel build error
 export default function TasksPage() {
   return (
-    <Suspense fallback={<div className="text-emerald-200">Loading...</div>}>
+    <Suspense fallback={<div className="text-emerald-200 p-10 text-center">Loading tasks layout...</div>}>
       <TasksContent />
     </Suspense>
   );
@@ -23,7 +23,6 @@ function TasksContent() {
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  // ✅ moved outside useEffect
   const loadTasks = async () => {
     try {
       const data = await taskAPI.getTasks();
@@ -31,7 +30,6 @@ function TasksContent() {
       setError(null);
     } catch (err: any) {
       console.error("Failed to load tasks:", err);
-
       if (err.response?.status === 401) {
         setError("You must be logged in to view your tasks.");
       } else {
@@ -44,10 +42,7 @@ function TasksContent() {
 
   useEffect(() => {
     loadTasks();
-
-    // auto refresh every 10 seconds
     intervalRef.current = setInterval(loadTasks, 10000);
-
     return () => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
@@ -56,14 +51,10 @@ function TasksContent() {
   }, []);
 
   const handleRefresh = () => {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-    }
-
+    if (intervalRef.current) clearInterval(intervalRef.current);
     setLoading(true);
     setError(null);
     loadTasks();
-
     intervalRef.current = setInterval(loadTasks, 10000);
   };
 
@@ -75,7 +66,6 @@ function TasksContent() {
     <div className="space-y-6">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-3xl font-bold">My Tasks</h2>
-
         <button
           onClick={handleRefresh}
           disabled={loading}
@@ -92,7 +82,6 @@ function TasksContent() {
         </button>
       </div>
 
-      {/* Add Task */}
       <AddTaskForm
         onCreated={(task) => setTasks((prev) => [task, ...prev])}
       />
@@ -149,12 +138,7 @@ function TasksContent() {
 /* ============================
    Add Task Component
 ============================ */
-
-function AddTaskForm({
-  onCreated,
-}: {
-  onCreated?: (task: TaskRead) => void;
-}) {
+function AddTaskForm({ onCreated }: { onCreated?: (task: TaskRead) => void }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -164,22 +148,17 @@ function AddTaskForm({
     e.preventDefault();
     setSubmitting(true);
     setError(null);
-
     try {
       const newTask = await taskAPI.createTask({
         title,
         description,
         status: false,
       });
-
       setTitle("");
       setDescription("");
       onCreated?.(newTask);
-
       window.dispatchEvent(new CustomEvent("tasks:changed"));
     } catch (err: any) {
-      console.error(err);
-
       if (err.response?.status === 401) {
         setError("You must be logged in to create tasks.");
       } else {
@@ -197,23 +176,20 @@ function AddTaskForm({
           {error}
         </div>
       )}
-
       <div className="flex gap-2">
         <input
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="Task title"
           required
-          className="flex-1 px-3 py-2 rounded bg-emerald-800/30 placeholder-emerald-400"
+          className="flex-1 px-3 py-2 rounded bg-emerald-800/30 placeholder-emerald-400 text-white"
         />
-
         <input
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder="Short description"
-          className="flex-1 px-3 py-2 rounded bg-emerald-800/30 placeholder-emerald-400"
+          className="flex-1 px-3 py-2 rounded bg-emerald-800/30 placeholder-emerald-400 text-white"
         />
-
         <button
           disabled={submitting}
           type="submit"
@@ -227,9 +203,8 @@ function AddTaskForm({
 }
 
 /* ============================
-   Task Item
+   Task Item Component
 ============================ */
-
 function TaskItem({
   task,
   onUpdated,
@@ -256,14 +231,12 @@ function TaskItem({
   const handleSave = async () => {
     setLoading(true);
     setError(null);
-
     try {
       const updated = await taskAPI.updateTask(task.id, {
         title,
         description,
         status,
       });
-
       onUpdated?.(updated);
       window.dispatchEvent(new CustomEvent("tasks:changed"));
       setIsEditing(false);
@@ -276,10 +249,8 @@ function TaskItem({
 
   const handleDelete = async () => {
     if (!confirm("Are you sure you want to delete this task?")) return;
-
     setDeleting(true);
     setError(null);
-
     try {
       await taskAPI.deleteTask(task.id);
       onDeleted?.(task.id);
@@ -296,20 +267,17 @@ function TaskItem({
       {isEditing ? (
         <div className="space-y-2">
           {error && <div className="text-red-400 text-sm">{error}</div>}
-
           <input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="w-full px-3 py-2 rounded bg-emerald-900/20"
+            className="w-full px-3 py-2 rounded bg-emerald-900/20 text-white"
           />
-
           <input
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="w-full px-3 py-2 rounded bg-emerald-900/20"
+            className="w-full px-3 py-2 rounded bg-emerald-900/20 text-white"
           />
-
-          <label className="flex items-center gap-2 text-sm">
+          <label className="flex items-center gap-2 text-sm text-white">
             <input
               type="checkbox"
               checked={status}
@@ -317,7 +285,6 @@ function TaskItem({
             />
             Completed
           </label>
-
           <div className="flex gap-2">
             <button
               onClick={handleSave}
@@ -326,7 +293,6 @@ function TaskItem({
             >
               {loading ? "Saving..." : "Save"}
             </button>
-
             <button
               onClick={() => setIsEditing(false)}
               className="px-3 py-1 bg-emerald-700 rounded text-white"
@@ -337,23 +303,22 @@ function TaskItem({
         </div>
       ) : (
         <div>
-          <h3 className="font-semibold">{task.title}</h3>
+          <h3 className="font-semibold text-white">{task.title}</h3>
           <p className="text-emerald-300 text-sm">{task.description}</p>
           <div className="mt-2 text-sm text-emerald-300">
             {task.status ? "Completed" : "Pending"}
           </div>
-
           <div className="mt-2 flex gap-2">
             <button
               onClick={() => setIsEditing(true)}
-              className="px-2 py-1 bg-emerald-600 rounded text-sm hover:bg-emerald-500"
+              className="px-2 py-1 bg-emerald-600 rounded text-sm hover:bg-emerald-500 text-white"
             >
               Edit
             </button>
             <button
               onClick={handleDelete}
               disabled={deleting}
-              className="px-2 py-1 bg-red-600 rounded text-sm hover:bg-red-500 disabled:opacity-50"
+              className="px-2 py-1 bg-red-600 rounded text-sm hover:bg-red-500 disabled:opacity-50 text-white"
             >
               {deleting ? "Deleting..." : "Delete"}
             </button>
