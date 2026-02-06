@@ -1,11 +1,21 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import type { TaskRead } from "../../../lib/generated/task_types";
 import { taskAPI } from "../../../lib/api-service";
 
+// Main page component with Suspense boundary
 export default function TasksPage() {
+  return (
+    <Suspense fallback={<div className="text-emerald-200">Loading...</div>}>
+      <TasksContent />
+    </Suspense>
+  );
+}
+
+// Separate component that uses useSearchParams
+function TasksContent() {
   const [tasks, setTasks] = useState<TaskRead[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
