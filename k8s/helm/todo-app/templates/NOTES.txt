@@ -1,0 +1,25 @@
+🎉 Todo AI Chatbot has been deployed!
+
+1. Get the application URLs:
+
+   Frontend: http://$(minikube ip):{{ .Values.frontend.service.nodePort }}
+   Backend:  http://$(minikube ip):{{ .Values.backend.service.nodePort }}
+
+2. Or use minikube service to open in browser:
+
+   minikube service {{ .Values.frontend.name }} -n {{ .Values.namespace }}
+
+3. Check pod status:
+
+   kubectl get pods -n {{ .Values.namespace }}
+
+4. View logs:
+
+   kubectl logs -l app={{ .Values.backend.name }} -n {{ .Values.namespace }}
+   kubectl logs -l app={{ .Values.frontend.name }} -n {{ .Values.namespace }}
+
+5. Test backend health:
+
+   curl http://$(minikube ip):{{ .Values.backend.service.nodePort }}/health
+
+Happy chatting! 🤖

@@ -1,0 +1,15 @@
+apiVersion: v2
+name: todo-app
+description: AI-powered Todo Chatbot with FastAPI and Next.js
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+keywords:
+  - todo
+  - chatbot
+  - fastapi
+  - nextjs
+  - cohere
+  - kubernetes
+maintainers:
+  - name: samreensami

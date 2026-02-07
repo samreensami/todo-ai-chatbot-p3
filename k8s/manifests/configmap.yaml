@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: todo-config
+  namespace: todo-app
+data:
+  api-url: "http://todo-backend:8000"
+  cors-origins: "*"
+  environment: "production"
+  log-level: "INFO"
