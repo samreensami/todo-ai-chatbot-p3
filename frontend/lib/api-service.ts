@@ -56,7 +56,9 @@ api.interceptors.response.use(
 
     // Auto logout on 401
     if (error.response?.status === 401 && typeof window !== "undefined") {
-      console.log("🔒 Unauthorized - redirecting to login");
+      console.log("🔒 Unauthorized - clearing token and redirecting to login");
+      localStorage.removeItem("token");
+      document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
       window.location.href = "/login";
     }
 

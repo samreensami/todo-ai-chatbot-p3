@@ -36,7 +36,9 @@ export default function LoginPage() {
 
       if (response.ok && data.access_token) {
         console.log("✅ Login successful!");
-        // Token is stored in httpOnly cookie automatically
+        // Store token in localStorage and cookie for auth checks
+        localStorage.setItem('token', data.access_token);
+        document.cookie = `token=${data.access_token}; path=/; max-age=86400; SameSite=Lax`;
         router.push("/dashboard");
       } else {
         console.error("❌ Login failed:", data);
